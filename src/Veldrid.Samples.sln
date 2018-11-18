@@ -2,51 +2,57 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GettingStarted", "GettingStarted\GettingStarted.csproj", "{D0D16984-9977-4379-BA97-CB16B6414BC7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GettingStarted", "GettingStarted\GettingStarted.csproj", "{D0D16984-9977-4379-BA97-CB16B6414BC7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImageTint", "ImageTint\ImageTint.csproj", "{42C2FD68-C0A5-44CF-BA48-8DE071838D5A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageTint", "ImageTint\ImageTint.csproj", "{42C2FD68-C0A5-44CF-BA48-8DE071838D5A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleBase", "SampleBase\SampleBase.csproj", "{7AF8692A-B52B-438C-A980-3B6BBCF15DA8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleBase", "SampleBase\SampleBase.csproj", "{7AF8692A-B52B-438C-A980-3B6BBCF15DA8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TexturedCube", "TexturedCube", "{68EA2FDF-987D-43F3-89A9-A4946D4EF8ED}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TexturedCube", "TexturedCube\Application\TexturedCube.csproj", "{EAFF7E6A-4805-456D-9E2B-6897296AA46C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TexturedCube", "TexturedCube\Application\TexturedCube.csproj", "{EAFF7E6A-4805-456D-9E2B-6897296AA46C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TexturedCube.Desktop", "TexturedCube\Desktop\TexturedCube.Desktop.csproj", "{28C40F37-4EB6-4437-9CAC-A7C982C1345E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TexturedCube.Desktop", "TexturedCube\Desktop\TexturedCube.Desktop.csproj", "{28C40F37-4EB6-4437-9CAC-A7C982C1345E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ComputeTexture", "ComputeTexture", "{18651987-1CD1-46EE-B3AE-81CD615C5333}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComputeTexture", "ComputeTexture\Application\ComputeTexture.csproj", "{7A4C3708-7BF9-4267-913B-28B5DA375BE8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComputeTexture", "ComputeTexture\Application\ComputeTexture.csproj", "{7A4C3708-7BF9-4267-913B-28B5DA375BE8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComputeTexture.Desktop", "ComputeTexture\Desktop\ComputeTexture.Desktop.csproj", "{E90F7606-B0DE-4310-8076-75BA07DAECFF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComputeTexture.Desktop", "ComputeTexture\Desktop\ComputeTexture.Desktop.csproj", "{E90F7606-B0DE-4310-8076-75BA07DAECFF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ComputeParticles", "ComputeParticles", "{A1711B90-E35F-4AA2-9324-AE6279EF183A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComputeParticles", "ComputeParticles\Application\ComputeParticles.csproj", "{02BBEE84-0475-432A-B1DD-D4668E0E209D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComputeParticles", "ComputeParticles\Application\ComputeParticles.csproj", "{02BBEE84-0475-432A-B1DD-D4668E0E209D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComputeParticles.Desktop", "ComputeParticles\Desktop\ComputeParticles.Desktop.csproj", "{3FDBDBE7-A1E4-4D0B-8000-7575DCCBB7D9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComputeParticles.Desktop", "ComputeParticles\Desktop\ComputeParticles.Desktop.csproj", "{3FDBDBE7-A1E4-4D0B-8000-7575DCCBB7D9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AnimatedMesh", "AnimatedMesh", "{B6130960-AB44-43CC-81EF-206B0F1980B8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnimatedMesh", "AnimatedMesh\Application\AnimatedMesh.csproj", "{2FECAAC7-31BB-42C6-88D4-589699503229}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnimatedMesh", "AnimatedMesh\Application\AnimatedMesh.csproj", "{2FECAAC7-31BB-42C6-88D4-589699503229}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnimatedMesh.Desktop", "AnimatedMesh\Desktop\AnimatedMesh.Desktop.csproj", "{0716493B-3018-428F-8A5F-097A16D994C9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnimatedMesh.Desktop", "AnimatedMesh\Desktop\AnimatedMesh.Desktop.csproj", "{0716493B-3018-428F-8A5F-097A16D994C9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Instancing", "Instancing", "{B7490B50-1A5B-44BE-8906-8C9060DE92FF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Instancing", "Instancing\Application\Instancing.csproj", "{7AC3F3E3-96E2-4F84-B731-BD05EFAF0DA2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Instancing", "Instancing\Application\Instancing.csproj", "{7AC3F3E3-96E2-4F84-B731-BD05EFAF0DA2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Instancing.Desktop", "Instancing\Desktop\Instancing.Desktop.csproj", "{91FB222C-1BC0-4C03-BDDC-F86DB8BF6A71}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Instancing.Desktop", "Instancing\Desktop\Instancing.Desktop.csproj", "{91FB222C-1BC0-4C03-BDDC-F86DB8BF6A71}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Offscreen", "Offscreen", "{024F672A-F683-4267-8C59-4B5F247649A6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Offscreen", "Offscreen\Application\Offscreen.csproj", "{BA045E7C-1CA1-447E-AF76-00F649622E12}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offscreen", "Offscreen\Application\Offscreen.csproj", "{BA045E7C-1CA1-447E-AF76-00F649622E12}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Offscreen.Desktop", "Offscreen\Desktop\Offscreen.Desktop.csproj", "{6B488622-A3C6-4C5F-8C61-068E0C0EDB0A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Offscreen.Desktop", "Offscreen\Desktop\Offscreen.Desktop.csproj", "{6B488622-A3C6-4C5F-8C61-068E0C0EDB0A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetProcessor", "AssetProcessor\AssetProcessor.csproj", "{A4EB09B4-46B2-4959-AB49-3E51C41674AC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssetProcessor", "AssetProcessor\AssetProcessor.csproj", "{A4EB09B4-46B2-4959-AB49-3E51C41674AC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssetPrimitives", "AssetPrimitives\AssetPrimitives.csproj", "{A4FD32D3-1C3F-4E8D-B681-428C3E1A39D3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TexturedQuad", "TexturedQuad", "{DCCCA285-DA50-4B97-A40F-7D3E718D2346}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TexturedQuad", "TexturedQuad\Application\TexturedQuad.csproj", "{B6B201F9-1C4B-4D91-82BC-030DC0230670}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TexturedQuad.Desktop", "TexturedQuad\Desktop\TexturedQuad.Desktop.csproj", "{3DDA9B96-AA40-487B-87D6-DABD102FEB73}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -262,6 +268,30 @@ Global
 		{A4FD32D3-1C3F-4E8D-B681-428C3E1A39D3}.Release|x64.Build.0 = Release|Any CPU
 		{A4FD32D3-1C3F-4E8D-B681-428C3E1A39D3}.Release|x86.ActiveCfg = Release|Any CPU
 		{A4FD32D3-1C3F-4E8D-B681-428C3E1A39D3}.Release|x86.Build.0 = Release|Any CPU
+		{B6B201F9-1C4B-4D91-82BC-030DC0230670}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6B201F9-1C4B-4D91-82BC-030DC0230670}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6B201F9-1C4B-4D91-82BC-030DC0230670}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B6B201F9-1C4B-4D91-82BC-030DC0230670}.Debug|x64.Build.0 = Debug|Any CPU
+		{B6B201F9-1C4B-4D91-82BC-030DC0230670}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B6B201F9-1C4B-4D91-82BC-030DC0230670}.Debug|x86.Build.0 = Debug|Any CPU
+		{B6B201F9-1C4B-4D91-82BC-030DC0230670}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6B201F9-1C4B-4D91-82BC-030DC0230670}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6B201F9-1C4B-4D91-82BC-030DC0230670}.Release|x64.ActiveCfg = Release|Any CPU
+		{B6B201F9-1C4B-4D91-82BC-030DC0230670}.Release|x64.Build.0 = Release|Any CPU
+		{B6B201F9-1C4B-4D91-82BC-030DC0230670}.Release|x86.ActiveCfg = Release|Any CPU
+		{B6B201F9-1C4B-4D91-82BC-030DC0230670}.Release|x86.Build.0 = Release|Any CPU
+		{3DDA9B96-AA40-487B-87D6-DABD102FEB73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DDA9B96-AA40-487B-87D6-DABD102FEB73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DDA9B96-AA40-487B-87D6-DABD102FEB73}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3DDA9B96-AA40-487B-87D6-DABD102FEB73}.Debug|x64.Build.0 = Debug|Any CPU
+		{3DDA9B96-AA40-487B-87D6-DABD102FEB73}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3DDA9B96-AA40-487B-87D6-DABD102FEB73}.Debug|x86.Build.0 = Debug|Any CPU
+		{3DDA9B96-AA40-487B-87D6-DABD102FEB73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DDA9B96-AA40-487B-87D6-DABD102FEB73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DDA9B96-AA40-487B-87D6-DABD102FEB73}.Release|x64.ActiveCfg = Release|Any CPU
+		{3DDA9B96-AA40-487B-87D6-DABD102FEB73}.Release|x64.Build.0 = Release|Any CPU
+		{3DDA9B96-AA40-487B-87D6-DABD102FEB73}.Release|x86.ActiveCfg = Release|Any CPU
+		{3DDA9B96-AA40-487B-87D6-DABD102FEB73}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -279,6 +309,8 @@ Global
 		{91FB222C-1BC0-4C03-BDDC-F86DB8BF6A71} = {B7490B50-1A5B-44BE-8906-8C9060DE92FF}
 		{BA045E7C-1CA1-447E-AF76-00F649622E12} = {024F672A-F683-4267-8C59-4B5F247649A6}
 		{6B488622-A3C6-4C5F-8C61-068E0C0EDB0A} = {024F672A-F683-4267-8C59-4B5F247649A6}
+		{B6B201F9-1C4B-4D91-82BC-030DC0230670} = {DCCCA285-DA50-4B97-A40F-7D3E718D2346}
+		{3DDA9B96-AA40-487B-87D6-DABD102FEB73} = {DCCCA285-DA50-4B97-A40F-7D3E718D2346}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {80EF3380-F3DA-4E7C-99D5-CBEDCFD4B0C7}
