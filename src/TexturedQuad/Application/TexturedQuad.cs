@@ -145,10 +145,7 @@ namespace TexturedQuad
             _cl.SetGraphicsResourceSet(0, _worldTextureSet);
             _cl.DrawIndexed(6, 1, 0, 0, 0);
 
-            _cl.SetPipeline(_pipeline);
-            _cl.SetGraphicsResourceSet(0, _worldTextureSet);
             _cl.SetVertexBuffer(0, _vertexBuffer2);
-            _cl.SetIndexBuffer(_indexBuffer, IndexFormat.UInt16);
             _cl.DrawIndexed(6, 1, 0, 0, 0);
 
             _cl.End();
