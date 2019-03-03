@@ -80,7 +80,7 @@ namespace TexturedQuad
                 new[]
                 {
                     new VertexLayoutDescription(
-                        new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float3),
+                        new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
                         new VertexElementDescription("TexCoords", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2))
                 },
                 factory.CreateFromSpirv(
@@ -158,10 +158,10 @@ namespace TexturedQuad
         {
             VertexPositionTexture[] vertices =
             {
-                new VertexPositionTexture(new Vector3(-0.5f + x, -0.5f + y, 0f), new Vector2(0, 1)), //bottom left
-                new VertexPositionTexture(new Vector3(+0.5f + x, -0.5f + y, 0f), new Vector2(1, 1)), //bottom right
-                new VertexPositionTexture(new Vector3(+0.5f + x, +0.5f + y, 0f), new Vector2(1, 0)), //top right
-                new VertexPositionTexture(new Vector3(-0.5f + x, +0.5f + y, 0f), new Vector2(0, 0))  //top left
+                new VertexPositionTexture(new Vector2(-0.5f + x, -0.5f + y), new Vector2(0, 1)), //bottom left
+                new VertexPositionTexture(new Vector2(+0.5f + x, -0.5f + y), new Vector2(1, 1)), //bottom right
+                new VertexPositionTexture(new Vector2(+0.5f + x, +0.5f + y), new Vector2(1, 0)), //top right
+                new VertexPositionTexture(new Vector2(-0.5f + x, +0.5f + y), new Vector2(0, 0))  //top left
             };
 
             return vertices;
@@ -184,12 +184,12 @@ layout(set = 0, binding = 0) uniform MvpBuffer
 {
     mat4 Mvp;
 };
-layout(location = 0) in vec3 Position;
+layout(location = 0) in vec2 Position;
 layout(location = 1) in vec2 TexCoords;
 layout(location = 0) out vec2 fsin_texCoords;
 void main()
 {
-    vec4 pos = Mvp * vec4(Position, 1);
+    vec4 pos = Mvp * vec4(Position, 1, 1);
     gl_Position = pos;
     fsin_texCoords = TexCoords;
 }";
@@ -208,20 +208,18 @@ void main()
 
     public struct VertexPositionTexture
     {
-        public const uint SizeInBytes = 20;
+        public const uint SizeInBytes = 16;
 
         public float PosX;
         public float PosY;
-        public float PosZ;
 
         public float TexU;
         public float TexV;
 
-        public VertexPositionTexture(Vector3 pos, Vector2 uv)
+        public VertexPositionTexture(Vector2 pos, Vector2 uv)
         {
             PosX = pos.X;
             PosY = pos.Y;
-            PosZ = pos.Z;
             TexU = uv.X;
             TexV = uv.Y;
         }
