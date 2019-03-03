@@ -11,7 +11,7 @@ namespace TexturedQuad
     {
         private readonly ProcessedTexture _stoneTexData;
 
-        private VertexPositionTexture[] _vertices1, _vertices2;
+        private VertexPosTexCol[] _vertices1, _vertices2;
         private readonly ushort[] _indices;
         private DeviceBuffer _mvpBuffer;
         private DeviceBuffer _vertexBuffer1, _vertexBuffer2;
@@ -23,12 +23,13 @@ namespace TexturedQuad
         private ResourceSet _worldTextureSet;
         private float _ticks;
         float x1 = 1.1f, y1 = 0.1f, x2 = -1.1f, y2 = 0.1f;
+        Vector4 col1 = new Vector4(1f, 0f, 0f, 1f), col2 = new Vector4(1f, 1f, 1f, 1f);
 
         public TexturedQuad(ApplicationWindow window) : base(window)
         {
             _stoneTexData = LoadEmbeddedAsset<ProcessedTexture>("spnza_bricks_a_diff.binary");
-            _vertices1 = GetQuadVertices(x1, y1);
-            _vertices2 = GetQuadVertices(x2, y2);
+            _vertices1 = GetQuadVertices(x1, y1, col1);
+            _vertices2 = GetQuadVertices(x2, y2, col2);
             _indices = GetQuadIndices();
             window.KeyPressed += Window_KeyPressed;
         }
@@ -39,22 +40,22 @@ namespace TexturedQuad
             {
                 case Key.Left:
                     x1 -= 0.1f;
-                    _vertices1 = GetQuadVertices(x1, y1);
+                    _vertices1 = GetQuadVertices(x1, y1, col1);
                     GraphicsDevice.UpdateBuffer(_vertexBuffer1, 0, _vertices1);
                     break;
                 case Key.Right:
                     x1 += 0.1f;
-                    _vertices1 = GetQuadVertices(x1, y1);
+                    _vertices1 = GetQuadVertices(x1, y1, col1);
                     GraphicsDevice.UpdateBuffer(_vertexBuffer1, 0, _vertices1);
                     break;
                 case Key.S:
                     x2 -= 0.1f;
-                    _vertices2 = GetQuadVertices(x2, y2);
+                    _vertices2 = GetQuadVertices(x2, y2, col2);
                     GraphicsDevice.UpdateBuffer(_vertexBuffer2, 0, _vertices2);
                     break;
                 case Key.D:
                     x2 += 0.1f;
-                    _vertices2 = GetQuadVertices(x2, y2);
+                    _vertices2 = GetQuadVertices(x2, y2, col2);
                     GraphicsDevice.UpdateBuffer(_vertexBuffer2, 0, _vertices2);
                     break;
             }
@@ -64,10 +65,10 @@ namespace TexturedQuad
         {
             _mvpBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
 
-            _vertexBuffer1 = factory.CreateBuffer(new BufferDescription((uint)(VertexPositionTexture.SizeInBytes * _vertices1.Length), BufferUsage.VertexBuffer));
+            _vertexBuffer1 = factory.CreateBuffer(new BufferDescription((uint)(VertexPosTexCol.SizeInBytes * _vertices1.Length), BufferUsage.VertexBuffer));
             GraphicsDevice.UpdateBuffer(_vertexBuffer1, 0, _vertices1);
 
-            _vertexBuffer2 = factory.CreateBuffer(new BufferDescription((uint)(VertexPositionTexture.SizeInBytes * _vertices2.Length), BufferUsage.VertexBuffer));
+            _vertexBuffer2 = factory.CreateBuffer(new BufferDescription((uint)(VertexPosTexCol.SizeInBytes * _vertices2.Length), BufferUsage.VertexBuffer));
             GraphicsDevice.UpdateBuffer(_vertexBuffer2, 0, _vertices2);
 
             _indexBuffer = factory.CreateBuffer(new BufferDescription(sizeof(ushort) * (uint)_indices.Length, BufferUsage.IndexBuffer));
@@ -81,7 +82,8 @@ namespace TexturedQuad
                 {
                     new VertexLayoutDescription(
                         new VertexElementDescription("Position", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
-                        new VertexElementDescription("TexCoords", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2))
+                        new VertexElementDescription("TexCoords", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2),
+                        new VertexElementDescription("Color", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float4))
                 },
                 factory.CreateFromSpirv(
                     new ShaderDescription(ShaderStages.Vertex, Encoding.UTF8.GetBytes(VertexCode), "main"),
@@ -154,14 +156,14 @@ namespace TexturedQuad
             //GraphicsDevice.WaitForIdle();
         }
 
-        private static VertexPositionTexture[] GetQuadVertices(float x, float y)
+        private static VertexPosTexCol[] GetQuadVertices(float x, float y, Vector4 col)
         {
-            VertexPositionTexture[] vertices =
+            VertexPosTexCol[] vertices =
             {
-                new VertexPositionTexture(new Vector2(-0.5f + x, -0.5f + y), new Vector2(0, 1)), //bottom left
-                new VertexPositionTexture(new Vector2(+0.5f + x, -0.5f + y), new Vector2(1, 1)), //bottom right
-                new VertexPositionTexture(new Vector2(+0.5f + x, +0.5f + y), new Vector2(1, 0)), //top right
-                new VertexPositionTexture(new Vector2(-0.5f + x, +0.5f + y), new Vector2(0, 0))  //top left
+                new VertexPosTexCol(new Vector2(-0.5f + x, -0.5f + y), new Vector2(0, 1), col), //bottom left
+                new VertexPosTexCol(new Vector2(+0.5f + x, -0.5f + y), new Vector2(1, 1), col), //bottom right
+                new VertexPosTexCol(new Vector2(+0.5f + x, +0.5f + y), new Vector2(1, 0), col), //top right
+                new VertexPosTexCol(new Vector2(-0.5f + x, +0.5f + y), new Vector2(0, 0), col)  //top left
             };
 
             return vertices;
@@ -186,29 +188,33 @@ layout(set = 0, binding = 0) uniform MvpBuffer
 };
 layout(location = 0) in vec2 Position;
 layout(location = 1) in vec2 TexCoords;
+layout(location = 2) in vec4 Color;
 layout(location = 0) out vec2 fsin_texCoords;
+layout(location = 1) out vec4 fsin_color;
 void main()
 {
     vec4 pos = Mvp * vec4(Position, 1, 1);
     gl_Position = pos;
     fsin_texCoords = TexCoords;
+    fsin_color = Color;
 }";
 
         private const string FragmentCode = @"
 #version 450
 layout(location = 0) in vec2 fsin_texCoords;
+layout(location = 1) in vec4 fsin_color;
 layout(location = 0) out vec4 fsout_color;
 layout(set = 1, binding = 1) uniform texture2D SurfaceTexture;
 layout(set = 1, binding = 2) uniform sampler SurfaceSampler;
 void main()
 {
-    fsout_color =  texture(sampler2D(SurfaceTexture, SurfaceSampler), fsin_texCoords);
+    fsout_color =  texture(sampler2D(SurfaceTexture, SurfaceSampler), fsin_texCoords) * fsin_color;
 }";
     }
 
-    public struct VertexPositionTexture
+    public struct VertexPosTexCol
     {
-        public const uint SizeInBytes = 16;
+        public const uint SizeInBytes = 32;
 
         public float PosX;
         public float PosY;
@@ -216,12 +222,21 @@ void main()
         public float TexU;
         public float TexV;
 
-        public VertexPositionTexture(Vector2 pos, Vector2 uv)
+        public float ColR;
+        public float ColG;
+        public float ColB;
+        public float ColA;
+
+        public VertexPosTexCol(Vector2 pos, Vector2 uv, Vector4 col)
         {
             PosX = pos.X;
             PosY = pos.Y;
             TexU = uv.X;
             TexV = uv.Y;
+            ColR = col.X;
+            ColG = col.Y;
+            ColB = col.Z;
+            ColA = col.W;
         }
     }
 }
