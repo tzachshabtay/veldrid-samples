@@ -11,12 +11,12 @@ namespace TexturedQuad
     {
         private readonly ProcessedTexture _stoneTexData;
 
-        private readonly VertexPositionTexture[] _vertices;
+        private VertexPositionTexture[] _vertices1, _vertices2;
         private readonly ushort[] _indices;
         private DeviceBuffer _projectionBuffer;
         private DeviceBuffer _viewBuffer;
         private DeviceBuffer _worldBuffer;
-        private DeviceBuffer _vertexBuffer;
+        private DeviceBuffer _vertexBuffer1, _vertexBuffer2;
         private DeviceBuffer _indexBuffer;
         private CommandList _cl;
         private Texture _surfaceTexture;
@@ -25,13 +25,44 @@ namespace TexturedQuad
         private ResourceSet _projViewSet;
         private ResourceSet _worldTextureSet;
         private float _ticks;
+        float x1 = 1.1f, y1 = 0.1f, x2 = -1.1f, y2 = 0.1f;
 
         public TexturedQuad(ApplicationWindow window) : base(window)
         {
             _stoneTexData = LoadEmbeddedAsset<ProcessedTexture>("spnza_bricks_a_diff.binary");
-            _vertices = GetQuadVertices();
+            _vertices1 = GetQuadVertices(x1, y1);
+            _vertices2 = GetQuadVertices(x2, y2);
             _indices = GetQuadIndices();
+            window.KeyPressed += Window_KeyPressed;
         }
+
+        void Window_KeyPressed(KeyEvent obj)
+        {
+            switch (obj.Key)
+            {
+                case Key.Left:
+                    x1 -= 0.1f;
+                    _vertices1 = GetQuadVertices(x1, y1);
+                    GraphicsDevice.UpdateBuffer(_vertexBuffer1, 0, _vertices1);
+                    break;
+                case Key.Right:
+                    x1 += 0.1f;
+                    _vertices1 = GetQuadVertices(x1, y1);
+                    GraphicsDevice.UpdateBuffer(_vertexBuffer1, 0, _vertices1);
+                    break;
+                case Key.S:
+                    x2 -= 0.1f;
+                    _vertices2 = GetQuadVertices(x2, y2);
+                    GraphicsDevice.UpdateBuffer(_vertexBuffer2, 0, _vertices2);
+                    break;
+                case Key.D:
+                    x2 += 0.1f;
+                    _vertices2 = GetQuadVertices(x2, y2);
+                    GraphicsDevice.UpdateBuffer(_vertexBuffer2, 0, _vertices2);
+                    break;
+            }
+        }
+
 
         protected unsafe override void CreateResources(ResourceFactory factory)
         {
@@ -39,8 +70,11 @@ namespace TexturedQuad
             _viewBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
             _worldBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
 
-            _vertexBuffer = factory.CreateBuffer(new BufferDescription((uint)(VertexPositionTexture.SizeInBytes * _vertices.Length), BufferUsage.VertexBuffer));
-            GraphicsDevice.UpdateBuffer(_vertexBuffer, 0, _vertices);
+            _vertexBuffer1 = factory.CreateBuffer(new BufferDescription((uint)(VertexPositionTexture.SizeInBytes * _vertices1.Length), BufferUsage.VertexBuffer));
+            GraphicsDevice.UpdateBuffer(_vertexBuffer1, 0, _vertices1);
+
+            _vertexBuffer2 = factory.CreateBuffer(new BufferDescription((uint)(VertexPositionTexture.SizeInBytes * _vertices2.Length), BufferUsage.VertexBuffer));
+            GraphicsDevice.UpdateBuffer(_vertexBuffer2, 0, _vertices2);
 
             _indexBuffer = factory.CreateBuffer(new BufferDescription(sizeof(ushort) * (uint)_indices.Length, BufferUsage.IndexBuffer));
             GraphicsDevice.UpdateBuffer(_indexBuffer, 0, _indices);
@@ -112,34 +146,41 @@ namespace TexturedQuad
             _cl.UpdateBuffer(_viewBuffer, 0, Matrix4x4.CreateLookAt(Vector3.UnitZ * 2.5f, Vector3.Zero, Vector3.UnitY));
 
             Matrix4x4 rotation =
-                Matrix4x4.CreateFromAxisAngle(Vector3.UnitY, (_ticks / 1000f))
-                * Matrix4x4.CreateFromAxisAngle(Vector3.UnitX, (_ticks / 3000f));
+                Matrix4x4.CreateFromAxisAngle(Vector3.UnitY, (30000f / 1000f))
+                * Matrix4x4.CreateFromAxisAngle(Vector3.UnitX, (30000f / 3000f));
             _cl.UpdateBuffer(_worldBuffer, 0, ref rotation);
 
             _cl.SetFramebuffer(MainSwapchain.Framebuffer);
             _cl.ClearColorTarget(0, RgbaFloat.Black);
             _cl.ClearDepthStencil(1f);
             _cl.SetPipeline(_pipeline);
-            _cl.SetVertexBuffer(0, _vertexBuffer);
+            _cl.SetVertexBuffer(0, _vertexBuffer1);
             _cl.SetIndexBuffer(_indexBuffer, IndexFormat.UInt16);
             _cl.SetGraphicsResourceSet(0, _projViewSet);
             _cl.SetGraphicsResourceSet(1, _worldTextureSet);
             _cl.DrawIndexed(6, 1, 0, 0, 0);
 
+            _cl.SetPipeline(_pipeline);
+            _cl.SetGraphicsResourceSet(0, _projViewSet);
+            _cl.SetGraphicsResourceSet(1, _worldTextureSet);
+            _cl.SetVertexBuffer(0, _vertexBuffer2);
+            _cl.SetIndexBuffer(_indexBuffer, IndexFormat.UInt16);
+            _cl.DrawIndexed(6, 1, 0, 0, 0);
+
             _cl.End();
             GraphicsDevice.SubmitCommands(_cl);
             GraphicsDevice.SwapBuffers(MainSwapchain);
-            GraphicsDevice.WaitForIdle();
+            //GraphicsDevice.WaitForIdle();
         }
 
-        private static VertexPositionTexture[] GetQuadVertices()
+        private static VertexPositionTexture[] GetQuadVertices(float x, float y)
         {
             VertexPositionTexture[] vertices =
             {
-                new VertexPositionTexture(new Vector3(-0.5f, -0.5f, 0f), new Vector2(0, 1)), //bottom left
-                new VertexPositionTexture(new Vector3(+0.5f, -0.5f, 0f), new Vector2(1, 1)), //bottom right
-                new VertexPositionTexture(new Vector3(+0.5f, +0.5f, 0f), new Vector2(1, 0)), //top right
-                new VertexPositionTexture(new Vector3(-0.5f, +0.5f, 0f), new Vector2(0, 0))  //top left
+                new VertexPositionTexture(new Vector3(-0.5f + x, -0.5f + y, 0f), new Vector2(0, 1)), //bottom left
+                new VertexPositionTexture(new Vector3(+0.5f + x, -0.5f + y, 0f), new Vector2(1, 1)), //bottom right
+                new VertexPositionTexture(new Vector3(+0.5f + x, +0.5f + y, 0f), new Vector2(1, 0)), //top right
+                new VertexPositionTexture(new Vector3(-0.5f + x, +0.5f + y, 0f), new Vector2(0, 0))  //top left
             };
 
             return vertices;
