@@ -13,16 +13,13 @@ namespace TexturedQuad
 
         private VertexPositionTexture[] _vertices1, _vertices2;
         private readonly ushort[] _indices;
-        private DeviceBuffer _projectionBuffer;
-        private DeviceBuffer _viewBuffer;
-        private DeviceBuffer _worldBuffer;
+        private DeviceBuffer _mvpBuffer;
         private DeviceBuffer _vertexBuffer1, _vertexBuffer2;
         private DeviceBuffer _indexBuffer;
         private CommandList _cl;
         private Texture _surfaceTexture;
         private TextureView _surfaceTextureView;
         private Pipeline _pipeline;
-        private ResourceSet _projViewSet;
         private ResourceSet _worldTextureSet;
         private float _ticks;
         float x1 = 1.1f, y1 = 0.1f, x2 = -1.1f, y2 = 0.1f;
@@ -63,12 +60,9 @@ namespace TexturedQuad
             }
         }
 
-
         protected unsafe override void CreateResources(ResourceFactory factory)
         {
-            _projectionBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
-            _viewBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
-            _worldBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
+            _mvpBuffer = factory.CreateBuffer(new BufferDescription(64, BufferUsage.UniformBuffer));
 
             _vertexBuffer1 = factory.CreateBuffer(new BufferDescription((uint)(VertexPositionTexture.SizeInBytes * _vertices1.Length), BufferUsage.VertexBuffer));
             GraphicsDevice.UpdateBuffer(_vertexBuffer1, 0, _vertices1);
@@ -93,14 +87,9 @@ namespace TexturedQuad
                     new ShaderDescription(ShaderStages.Vertex, Encoding.UTF8.GetBytes(VertexCode), "main"),
                     new ShaderDescription(ShaderStages.Fragment, Encoding.UTF8.GetBytes(FragmentCode), "main")));
 
-            ResourceLayout projViewLayout = factory.CreateResourceLayout(
-                new ResourceLayoutDescription(
-                    new ResourceLayoutElementDescription("Projection", ResourceKind.UniformBuffer, ShaderStages.Vertex),
-                    new ResourceLayoutElementDescription("View", ResourceKind.UniformBuffer, ShaderStages.Vertex)));
-
             ResourceLayout worldTextureLayout = factory.CreateResourceLayout(
                 new ResourceLayoutDescription(
-                    new ResourceLayoutElementDescription("World", ResourceKind.UniformBuffer, ShaderStages.Vertex),
+                    new ResourceLayoutElementDescription("Mvp", ResourceKind.UniformBuffer, ShaderStages.Vertex),
                     new ResourceLayoutElementDescription("SurfaceTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
                     new ResourceLayoutElementDescription("SurfaceSampler", ResourceKind.Sampler, ShaderStages.Fragment)));
 
@@ -110,17 +99,12 @@ namespace TexturedQuad
                 RasterizerStateDescription.Default,
                 PrimitiveTopology.TriangleList,
                 shaderSet,
-                new[] { projViewLayout, worldTextureLayout },
+                new[] { worldTextureLayout },
                 MainSwapchain.Framebuffer.OutputDescription));
-
-            _projViewSet = factory.CreateResourceSet(new ResourceSetDescription(
-                projViewLayout,
-                _projectionBuffer,
-                _viewBuffer));
 
             _worldTextureSet = factory.CreateResourceSet(new ResourceSetDescription(
                 worldTextureLayout,
-                _worldBuffer,
+                _mvpBuffer,
                 _surfaceTextureView,
                 GraphicsDevice.Aniso4xSampler));
 
@@ -137,18 +121,20 @@ namespace TexturedQuad
             _ticks += deltaSeconds * 1000f;
             _cl.Begin();
 
-            _cl.UpdateBuffer(_projectionBuffer, 0, Matrix4x4.CreatePerspectiveFieldOfView(
+            var projMat = Matrix4x4.CreatePerspectiveFieldOfView(
                 1.0f,
                 (float)Window.Width / Window.Height,
                 0.5f,
-                100f));
+                100f);
 
-            _cl.UpdateBuffer(_viewBuffer, 0, Matrix4x4.CreateLookAt(Vector3.UnitZ * 2.5f, Vector3.Zero, Vector3.UnitY));
+            var viewMat = Matrix4x4.CreateLookAt(Vector3.UnitZ * 2.5f, Vector3.Zero, Vector3.UnitY);
 
             Matrix4x4 rotation =
                 Matrix4x4.CreateFromAxisAngle(Vector3.UnitY, (30000f / 1000f))
                 * Matrix4x4.CreateFromAxisAngle(Vector3.UnitX, (30000f / 3000f));
-            _cl.UpdateBuffer(_worldBuffer, 0, ref rotation);
+
+            var mvp = rotation * viewMat * projMat;
+            _cl.UpdateBuffer(_mvpBuffer, 0, ref mvp);
 
             _cl.SetFramebuffer(MainSwapchain.Framebuffer);
             _cl.ClearColorTarget(0, RgbaFloat.Black);
@@ -156,13 +142,11 @@ namespace TexturedQuad
             _cl.SetPipeline(_pipeline);
             _cl.SetVertexBuffer(0, _vertexBuffer1);
             _cl.SetIndexBuffer(_indexBuffer, IndexFormat.UInt16);
-            _cl.SetGraphicsResourceSet(0, _projViewSet);
-            _cl.SetGraphicsResourceSet(1, _worldTextureSet);
+            _cl.SetGraphicsResourceSet(0, _worldTextureSet);
             _cl.DrawIndexed(6, 1, 0, 0, 0);
 
             _cl.SetPipeline(_pipeline);
-            _cl.SetGraphicsResourceSet(0, _projViewSet);
-            _cl.SetGraphicsResourceSet(1, _worldTextureSet);
+            _cl.SetGraphicsResourceSet(0, _worldTextureSet);
             _cl.SetVertexBuffer(0, _vertexBuffer2);
             _cl.SetIndexBuffer(_indexBuffer, IndexFormat.UInt16);
             _cl.DrawIndexed(6, 1, 0, 0, 0);
@@ -199,27 +183,17 @@ namespace TexturedQuad
 
         private const string VertexCode = @"
 #version 450
-layout(set = 0, binding = 0) uniform ProjectionBuffer
+layout(set = 0, binding = 0) uniform MvpBuffer
 {
-    mat4 Projection;
-};
-layout(set = 0, binding = 1) uniform ViewBuffer
-{
-    mat4 View;
-};
-layout(set = 1, binding = 0) uniform WorldBuffer
-{
-    mat4 World;
+    mat4 Mvp;
 };
 layout(location = 0) in vec3 Position;
 layout(location = 1) in vec2 TexCoords;
 layout(location = 0) out vec2 fsin_texCoords;
 void main()
 {
-    vec4 worldPosition = World * vec4(Position, 1);
-    vec4 viewPosition = View * worldPosition;
-    vec4 clipPosition = Projection * viewPosition;
-    gl_Position = clipPosition;
+    vec4 pos = Mvp * vec4(Position, 1);
+    gl_Position = pos;
     fsin_texCoords = TexCoords;
 }";
 
