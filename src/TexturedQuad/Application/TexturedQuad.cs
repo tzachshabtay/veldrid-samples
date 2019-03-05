@@ -109,7 +109,7 @@ namespace TexturedQuad
             _pipeline = factory.CreateGraphicsPipeline(new GraphicsPipelineDescription(
                 BlendStateDescription.SingleOverrideBlend,
                 DepthStencilStateDescription.DepthOnlyLessEqual,
-                RasterizerStateDescription.Default,
+                new RasterizerStateDescription(FaceCullMode.Back, PolygonFillMode.Solid, FrontFace.CounterClockwise, false, false),
                 PrimitiveTopology.TriangleList,
                 shaderSet,
                 new[] { worldTextureLayout },
@@ -136,7 +136,7 @@ namespace TexturedQuad
 
             float width = 800f;
             float height = 600f;
-            var projMat = Matrix4x4.CreateOrthographicOffCenter(0f, width, height, 0f, -1f, 1f);
+            var projMat = Matrix4x4.CreateOrthographicOffCenter(0f, width, 0f, height, -1f, 1f);
 
             var viewMat = Matrix4x4.CreateLookAt(Vector3.UnitZ, Vector3.Zero, Vector3.UnitY);
 
