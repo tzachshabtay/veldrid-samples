@@ -1,5 +1,6 @@
 ﻿using AssetPrimitives;
 using SampleBase;
+using System.Diagnostics;
 using System.Numerics;
 using System.Text;
 using Veldrid;
@@ -22,7 +23,7 @@ namespace TexturedQuad
         private Pipeline _pipeline;
         private ResourceSet _worldTextureSet;
         private float _ticks;
-        float x1 = 1.1f, y1 = 0.1f, x2 = -1.1f, y2 = 0.1f;
+        float x1 = 0f, y1 = 0f, x2 = 400f, y2 = 300f;
         Vector4 col1 = new Vector4(1f, 0f, 0f, 1f), col2 = new Vector4(1f, 1f, 1f, 1f);
 
         public TexturedQuad(ApplicationWindow window) : base(window)
@@ -39,22 +40,32 @@ namespace TexturedQuad
             switch (obj.Key)
             {
                 case Key.Left:
-                    x1 -= 0.1f;
+                    x1 -= 100f;
                     _vertices1 = GetQuadVertices(x1, y1, col1);
                     GraphicsDevice.UpdateBuffer(_vertexBuffer1, 0, _vertices1);
                     break;
                 case Key.Right:
-                    x1 += 0.1f;
+                    x1 += 100f;
+                    _vertices1 = GetQuadVertices(x1, y1, col1);
+                    GraphicsDevice.UpdateBuffer(_vertexBuffer1, 0, _vertices1);
+                    break;
+                case Key.Down:
+                    y1 -= 100f;
+                    _vertices1 = GetQuadVertices(x1, y1, col1);
+                    GraphicsDevice.UpdateBuffer(_vertexBuffer1, 0, _vertices1);
+                    break;
+                case Key.Up:
+                    y1 += 100f;
                     _vertices1 = GetQuadVertices(x1, y1, col1);
                     GraphicsDevice.UpdateBuffer(_vertexBuffer1, 0, _vertices1);
                     break;
                 case Key.S:
-                    x2 -= 0.1f;
+                    x2 -= 100f;
                     _vertices2 = GetQuadVertices(x2, y2, col2);
                     GraphicsDevice.UpdateBuffer(_vertexBuffer2, 0, _vertices2);
                     break;
                 case Key.D:
-                    x2 += 0.1f;
+                    x2 += 100f;
                     _vertices2 = GetQuadVertices(x2, y2, col2);
                     GraphicsDevice.UpdateBuffer(_vertexBuffer2, 0, _vertices2);
                     break;
@@ -123,19 +134,13 @@ namespace TexturedQuad
             _ticks += deltaSeconds * 1000f;
             _cl.Begin();
 
-            var projMat = Matrix4x4.CreatePerspectiveFieldOfView(
-                1.0f,
-                (float)Window.Width / Window.Height,
-                0.5f,
-                100f);
+            float width = 800f;
+            float height = 600f;
+            var projMat = Matrix4x4.CreateOrthographicOffCenter(0f, width, height, 0f, -1f, 1f);
 
-            var viewMat = Matrix4x4.CreateLookAt(Vector3.UnitZ * 2.5f, Vector3.Zero, Vector3.UnitY);
+            var viewMat = Matrix4x4.CreateLookAt(Vector3.UnitZ, Vector3.Zero, Vector3.UnitY);
 
-            Matrix4x4 rotation =
-                Matrix4x4.CreateFromAxisAngle(Vector3.UnitY, (30000f / 1000f))
-                * Matrix4x4.CreateFromAxisAngle(Vector3.UnitX, (30000f / 3000f));
-
-            var mvp = rotation * viewMat * projMat;
+            var mvp = viewMat * projMat;
             _cl.UpdateBuffer(_mvpBuffer, 0, ref mvp);
 
             _cl.SetFramebuffer(MainSwapchain.Framebuffer);
@@ -145,6 +150,9 @@ namespace TexturedQuad
             _cl.SetVertexBuffer(0, _vertexBuffer1);
             _cl.SetIndexBuffer(_indexBuffer, IndexFormat.UInt16);
             _cl.SetGraphicsResourceSet(0, _worldTextureSet);
+
+            _cl.SetViewport(0, new Viewport(0f, 0f, base.Window.Width, base.Window.Height, -1f, 1f));
+
             _cl.DrawIndexed(6, 1, 0, 0, 0);
 
             _cl.SetVertexBuffer(0, _vertexBuffer2);
@@ -158,12 +166,14 @@ namespace TexturedQuad
 
         private static VertexPosTexCol[] GetQuadVertices(float x, float y, Vector4 col)
         {
+            const float width = 200f;
+            const float height = 200f;
             VertexPosTexCol[] vertices =
             {
-                new VertexPosTexCol(new Vector2(-0.5f + x, -0.5f + y), new Vector2(0, 1), col), //bottom left
-                new VertexPosTexCol(new Vector2(+0.5f + x, -0.5f + y), new Vector2(1, 1), col), //bottom right
-                new VertexPosTexCol(new Vector2(+0.5f + x, +0.5f + y), new Vector2(1, 0), col), //top right
-                new VertexPosTexCol(new Vector2(-0.5f + x, +0.5f + y), new Vector2(0, 0), col)  //top left
+                new VertexPosTexCol(new Vector2(-width + x, -height + y), new Vector2(0, 1), col), //bottom left
+                new VertexPosTexCol(new Vector2(+width + x, -height + y), new Vector2(1, 1), col), //bottom right
+                new VertexPosTexCol(new Vector2(+width + x, +height + y), new Vector2(1, 0), col), //top right
+                new VertexPosTexCol(new Vector2(-width + x, +height + y), new Vector2(0, 0), col)  //top left
             };
 
             return vertices;
@@ -193,8 +203,8 @@ layout(location = 0) out vec2 fsin_texCoords;
 layout(location = 1) out vec4 fsin_color;
 void main()
 {
-    vec4 pos = Mvp * vec4(Position, 1, 1);
-    gl_Position = pos;
+    vec4 pos = vec4(Position, 1., 1.);
+    gl_Position = Mvp * pos;
     fsin_texCoords = TexCoords;
     fsin_color = Color;
 }";
