@@ -25,6 +25,8 @@ namespace TexturedQuad
         private float _ticks;
         float x1 = 0f, y1 = 0f, x2 = 400f, y2 = 300f;
         Vector4 col1 = new Vector4(1f, 0f, 0f, 1f), col2 = new Vector4(1f, 1f, 1f, 1f);
+        RgbaFloat[] colors = { new RgbaFloat(1f, 0f, 0f, 1f), new RgbaFloat(0f, 0f, 1f, 1f), new RgbaFloat(0f, 1f, 0f, 1f) };
+        int currentColor;
 
         public TexturedQuad(ApplicationWindow window) : base(window)
         {
@@ -69,6 +71,9 @@ namespace TexturedQuad
                     _vertices2 = GetQuadVertices(x2, y2, col2);
                     GraphicsDevice.UpdateBuffer(_vertexBuffer2, 0, _vertices2);
                     break;
+                case Key.C:
+                    currentColor = (currentColor + 1) % colors.Length;
+                    break;
             }
         }
 
@@ -102,7 +107,7 @@ namespace TexturedQuad
 
             ResourceLayout worldTextureLayout = factory.CreateResourceLayout(
                 new ResourceLayoutDescription(
-                    new ResourceLayoutElementDescription("Mvp", ResourceKind.UniformBuffer, ShaderStages.Vertex),
+                    new ResourceLayoutElementDescription("MvpBuffer", ResourceKind.UniformBuffer, ShaderStages.Vertex),
                     new ResourceLayoutElementDescription("SurfaceTexture", ResourceKind.TextureReadOnly, ShaderStages.Fragment),
                     new ResourceLayoutElementDescription("SurfaceSampler", ResourceKind.Sampler, ShaderStages.Fragment)));
 
@@ -144,7 +149,7 @@ namespace TexturedQuad
             _cl.UpdateBuffer(_mvpBuffer, 0, ref mvp);
 
             _cl.SetFramebuffer(MainSwapchain.Framebuffer);
-            _cl.ClearColorTarget(0, RgbaFloat.Black);
+            _cl.ClearColorTarget(0, colors[currentColor]);
             _cl.SetPipeline(_pipeline);
             _cl.SetVertexBuffer(0, _vertexBuffer1);
             _cl.SetIndexBuffer(_indexBuffer, IndexFormat.UInt16);
