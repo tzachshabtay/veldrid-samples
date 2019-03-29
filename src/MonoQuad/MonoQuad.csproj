@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>MonoQuad</RootNamespace>
+    <AssemblyName>MonoQuad</AssemblyName>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+    <TargetFramework>net461</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ValueTuple">
+      <HintPath>..\..\..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Veldrid" Version="4.5.0" />
+    <PackageReference Include="Veldrid.Utilities" Version="4.5.0" />
+    <PackageReference Include="Veldrid.SDL2" Version="4.5.0" />
+    <PackageReference Include="Veldrid.StartupUtilities" Version="4.5.0" />
+    <PackageReference Include="Veldrid.SPIRV" Version="1.0.8" />
+  </ItemGroup>
+  <ItemGroup>
+    <Asset Include="..\..\assets\sponza\spnza_bricks_a_diff.png">
+      <Link>spnza_bricks_a_diff.png</Link>
+    </Asset>
+  </ItemGroup>
+</Project>
