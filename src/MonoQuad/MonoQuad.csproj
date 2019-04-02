@@ -26,9 +26,4 @@
     <PackageReference Include="Veldrid.StartupUtilities" Version="4.5.0" />
     <PackageReference Include="Veldrid.SPIRV" Version="1.0.9" />
   </ItemGroup>
-  <ItemGroup>
-    <Asset Include="..\..\assets\sponza\spnza_bricks_a_diff.png">
-      <Link>spnza_bricks_a_diff.png</Link>
-    </Asset>
-  </ItemGroup>
 </Project>
