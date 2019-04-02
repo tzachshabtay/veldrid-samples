@@ -1,6 +1,9 @@
 ﻿using AssetPrimitives;
 using SampleBase;
+using System;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Numerics;
 using System.Text;
@@ -11,7 +14,7 @@ namespace TexturedQuad
 {
     public class TexturedQuad : SampleApplication
     {
-        private readonly ProcessedTexture _stoneTexData;
+        private readonly Bitmap _stoneTexData;
 
         private VertexPosTexCol[] _vertices1, _vertices2;
         private readonly ushort[] _indices;
@@ -31,26 +34,45 @@ namespace TexturedQuad
 
         public TexturedQuad(ApplicationWindow window) : base(window)
         {
-            _stoneTexData = LoadEmbeddedAsset<ProcessedTexture>("spnza_bricks_a_diff.binary");
+            _stoneTexData = loadBitmap(); //LoadEmbeddedAsset<ProcessedTexture>("spnza_bricks_a_diff.binary");
             _vertices1 = GetQuadVertices(x1, y1, col1);
             _vertices2 = GetQuadVertices(x2, y2, col2);
             _indices = GetQuadIndices();
             window.KeyPressed += Window_KeyPressed;
         }
 
-        /*private void loadTexture()
+        private Bitmap loadBitmap()
         {
-            using (Stream stream = GetType().Assembly.GetManifestResourceStream(name))
-            {
-                if (stream == null)
-                {
-                    throw new InvalidOperationException("No embedded asset with the name " + name);
-                }
+            var bitmap = new Bitmap("/Users/zachi/Projects/MonoAGS/Source/Demo/DemoQuest/Assets/Rooms/EmptyStreet/bg.png");
+            return bitmap;
+        }
 
-                BinaryReader reader = new BinaryReader(stream);
-                return (T)serializer.Read(reader);
+        private unsafe Texture loadTexture()
+        {
+            Texture texture = ResourceFactory.CreateTexture(new TextureDescription(
+                   320, 200, 1, 1, 1, Veldrid.PixelFormat.B8_G8_R8_A8_UNorm, TextureUsage.Sampled, TextureType.Texture2D));
+
+            Texture staging = ResourceFactory.CreateTexture(new TextureDescription(
+                320, 200, 1, 1, 1, Veldrid.PixelFormat.B8_G8_R8_A8_UNorm, TextureUsage.Staging, TextureType.Texture2D));
+
+            uint size = 320 * 200 * 4;
+            BitmapData data = _stoneTexData.LockBits(new System.Drawing.Rectangle(0, 0, 320, 200),
+                    ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            var scan0 = data.Scan0;
+            if (scan0 != IntPtr.Zero)
+            {
+                GraphicsDevice.UpdateTexture(staging, scan0, size, 0, 0, 0, 320, 200, 0, 0, 0);
             }
-        }*/
+            _stoneTexData.UnlockBits(data);
+
+            CommandList cl = ResourceFactory.CreateCommandList();
+            cl.Begin();
+            cl.CopyTexture(staging, texture);
+            cl.End();
+            GraphicsDevice.SubmitCommands(cl);
+
+            return texture;
+        }
 
         void Window_KeyPressed(KeyEvent obj)
         {
@@ -105,7 +127,7 @@ namespace TexturedQuad
             _indexBuffer = factory.CreateBuffer(new BufferDescription(sizeof(ushort) * (uint)_indices.Length, BufferUsage.IndexBuffer));
             GraphicsDevice.UpdateBuffer(_indexBuffer, 0, _indices);
 
-            _surfaceTexture = _stoneTexData.CreateDeviceTexture(GraphicsDevice, ResourceFactory, TextureUsage.Sampled);
+            _surfaceTexture = loadTexture();
             _surfaceTextureView = factory.CreateTextureView(_surfaceTexture);
 
             ShaderSetDescription shaderSet = new ShaderSetDescription(
