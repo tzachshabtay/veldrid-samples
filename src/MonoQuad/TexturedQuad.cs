@@ -43,7 +43,7 @@ namespace TexturedQuad
 
         private Bitmap loadBitmap()
         {
-            var bitmap = new Bitmap("/Users/zachi/Projects/MonoAGS/Source/Demo/DemoQuest/Assets/Rooms/EmptyStreet/bg.png");
+            var bitmap = new Bitmap("bg.png");
             return bitmap;
         }
 
